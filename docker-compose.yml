@@ -1,14 +1,17 @@
 version: "3.8"
 services:
-  api:
-    container_name: ikaeve_api
+  app:
     build:
-      context: ./api
-    ports:
-      - "5000:5000"
+      context: .
+    restart: always
+    environment:
+      DATABASE_URL: postgresql://ikaeve:ikaeve@db:5432/ikaeve
+    env_file:
+      - .env
   db:
-    container_name: ikaeve_db
-    build:
-      context: ./mariadb
-    ports:
-      - "3306:3306"
+    image: postgres:14.2
+    restart: always
+    environment:
+      POSTGRES_USER: ikaeve
+      POSTGRES_DB: ikaeve
+      POSTGRES_PASSWORD: ikaeve
