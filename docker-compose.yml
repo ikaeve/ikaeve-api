@@ -1,0 +1,26 @@
+version: "3.8"
+services:
+    app:
+        container_name: sp2_tournament_app
+        build:
+            context: ./app
+        ports:
+            - "5000:5000"
+        networks:
+            - sp2_tournament_network
+        tty: true
+    api:
+        container_name: sp2_tournament_api
+        restart: always
+        build:
+            context: ./nginx
+        ports:
+            - "80:80"
+        networks:
+            - sp2_tournament_network
+        depends_on:
+            - app
+
+networks: 
+  sp2_tournament_network:
+    external: true
