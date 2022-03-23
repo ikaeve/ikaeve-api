@@ -1,17 +1,14 @@
 version: "3.8"
 services:
-  app:
-    container_name: ikaeve_app
-    build:
-      context: ./app
-    ports:
-      - "5000:5000"
   api:
     container_name: ikaeve_api
-    restart: always
     build:
-      context: ./nginx
+      context: ./api
     ports:
-      - "80:80"
-    depends_on:
-      - app
+      - "5000:5000"
+  db:
+    container_name: ikaeve_db
+    build:
+      context: ./mariadb
+    ports:
+      - "3306:3306"
