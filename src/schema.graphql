@@ -1,0 +1,8 @@
+type User {
+  name: String!
+  pid: String
+}
+
+type Query {
+  users: [User!]!
+}
