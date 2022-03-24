@@ -1,26 +1,17 @@
 version: "3.8"
 services:
-    app:
-        container_name: sp2_tournament_app
-        build:
-            context: ./app
-        ports:
-            - "5000:5000"
-        networks:
-            - sp2_tournament_network
-        tty: true
-    api:
-        container_name: sp2_tournament_api
-        restart: always
-        build:
-            context: ./nginx
-        ports:
-            - "80:80"
-        networks:
-            - sp2_tournament_network
-        depends_on:
-            - app
-
-networks: 
-  sp2_tournament_network:
-    external: true
+  app:
+    build:
+      context: .
+    restart: always
+    environment:
+      DATABASE_URL: postgresql://ikaeve:ikaeve@db:5432/ikaeve
+    env_file:
+      - .env
+  db:
+    image: postgres:14.2
+    restart: always
+    environment:
+      POSTGRES_USER: ikaeve
+      POSTGRES_DB: ikaeve
+      POSTGRES_PASSWORD: ikaeve
