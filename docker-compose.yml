@@ -1,17 +1,20 @@
 version: "3.8"
 services:
-  app:
-    build:
-      context: .
-    restart: always
-    environment:
-      DATABASE_URL: postgresql://ikaeve:ikaeve@db:5432/ikaeve
-    env_file:
-      - .env
+  # api:
+  #   container_name: ikaeve_api
+  #   build:
+  #     context: ./api
+  #   ports:
+  #     - 3000:3000
   db:
-    image: postgres:14.2
-    restart: always
+    image: mariadb:10.8-rc
+    container_name: ikaeve_db
+    # build:
+    #   context: ./db
+    ports:
+      - 3306:3306
     environment:
-      POSTGRES_USER: ikaeve
-      POSTGRES_DB: ikaeve
-      POSTGRES_PASSWORD: ikaeve
+      MYSQL_ROOT_PASSWORD: $MYSQL_ROOT_PASSWORD
+      MYSQL_DATABASE: $MYSQL_DATABASE
+      MYSQL_USER: $MYSQL_USER
+      MYSQL_PASSWORD: $MYSQL_PASSWORD
