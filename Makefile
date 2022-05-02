@@ -4,7 +4,7 @@ up:
 
 .PHONY: migration
 migration:
-	cd api && yarn prisma migrate dev --name init
+	yarn prisma migrate dev --name init
 
 .PHONY: init
 init:
