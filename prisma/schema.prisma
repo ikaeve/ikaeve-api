@@ -1,0 +1,297 @@
+datasource db {
+  provider = "mysql"
+  url      = "mysql://ikaeve:ikaeve@localhost:3306/ikaeve"
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+//ゲームタイトルマスタ
+enum game_titles {
+  SPLATOON2
+  SPLATOON3
+}
+
+//公開設定マスタ
+enum privacies {
+  PUBLIC  //公開
+  LIMITED //限定公開
+  PRIVATE //非公開
+}
+
+//順位マスタ
+enum rank_positions {
+  DOWN  //降下 
+  KEEP  //維持
+  UP    //上昇
+}
+
+//トーナメント形式マスタ
+enum tournament_systems {
+  SINGLE_ELIMINATION  //シングルエリミネーション
+  DOUBLE_ELIMINATION  //ダブルエリミネーション
+  LEAGUE              //リーグ（シングルラウンドロビン）
+  SWISS_DRAW          //スイスドロー
+}
+
+//トーナメント組み合わせマスタ
+enum tournament_matchings {
+  AUTO        //自動(1位昇順、2位降順)
+  APPLICATION //申請順
+  X_POWER     //Xパワー順
+  RANDOM      //シャッフル
+}
+
+//シーズンマスタ
+enum seasons {
+  SPRING
+  SUMMER
+  FALL
+  WINTER
+  ANNUAL
+}
+
+//大会ステータスマスタ
+enum statuses {
+  OPEN        //開催中
+  RECRUITING  //募集中
+  CLOSE       //終了
+}
+
+//大会ステージマスタ
+enum stages {
+  QUALIFYING  //予選
+  MAIN_RACE   //本戦
+  FINAL       //決勝戦
+}
+
+//公式大会申請ステータスマスタ
+enum tournament_apply_status {
+  APPLY     //申請済み
+  APPROVED  //承認済み
+  REJECTED  //棄却
+}
+
+//シリーズ
+model series {
+  id             BigInt      @id @default(autoincrement())
+  name           String      @db.VarChar(255)   //名称
+  permanent_url  String      @db.VarChar(1023)  //固定URL
+  image_url      String      @db.VarChar(1023)  //シリーズ画像
+  user           users?                         //ユーザー
+  team           teams?                         //チーム
+  tournaments    tournaments @relation(fields: [tournaments_id], references: [id])
+  tournaments_id BigInt      @unique
+  created_at     DateTime    @default(now())
+  updated_at     DateTime    @updatedAt
+}
+
+//ユーザ
+model users {
+  id                 BigInt          @id @default(autoincrement())
+  name               String          @db.VarChar(255)         //名前
+  permanent_url      String          @db.VarChar(1023)        //固定URL
+  image_url          String          @db.VarChar(1023)        //アイコン画像
+  twitter_username   String          @db.VarChar(255)         //twitterユーザーネーム
+  twitter_uid        String          @unique @db.VarChar(255) //Twitter UID
+  comment            String          @db.VarChar(1023)        //コメント
+  friend_code        String          @db.VarChar(255)         //フレンドコード
+  privacy            privacies
+  series             series          @relation(fields: [series_id], references: [id])
+  series_id          BigInt          @unique
+  tournaments        tournaments     @relation(fields: [tournaments_id], references: [id])
+  tournaments_id     BigInt          @unique
+  tournament_user    tournament_user @relation(fields: [tournament_user_id], references: [id])
+  tournament_user_id BigInt          @unique
+  access_tokens      access_tokens   @relation(fields: [access_tokens_id], references: [id])
+  access_tokens_id   BigInt          @unique
+  user_points        user_points     @relation(fields: [user_points_id], references: [id])
+  user_points_id     BigInt          @unique
+  team_user          team_user       @relation(fields: [team_user_id], references: [id])
+  team_user_id       BigInt          @unique
+  user_ranks         user_ranks      @relation(fields: [user_ranks_id], references: [id])
+  user_ranks_id      BigInt          @unique
+  created_at         DateTime        @default(now())
+  updated_at         DateTime        @updatedAt
+}
+
+//チーム
+model teams {
+  id                       BigInt            @id @default(autoincrement())
+  name                     String            @db.VarChar(255)   //名前
+  permanent_url            String            @db.VarChar(1023)  //固定URL
+  image_url                String            @db.VarChar(1023)  //アイコン画像
+  comment                  String            @db.VarChar(1023)  //コメント
+  twitter_url              String            @db.VarChar(1023)  //Twitter URL
+  discord_url              String            @db.VarChar(1023)  //Discord URL
+  privacy                  privacies
+  series                   series            @relation(fields: [series_id], references: [id])
+  series_id                BigInt            @unique
+  tournaments              tournaments       @relation(fields: [tournaments_id], references: [id])
+  tournaments_id           BigInt            @unique
+  team_points              team_points       @relation(fields: [team_points_id], references: [id])
+  team_points_id           BigInt            @unique
+  tournament_alpha_team    tournament_matchs @relation("alpha_team", fields: [tournament_alpha_team_id], references: [id])
+  tournament_alpha_team_id BigInt            @unique
+  tournament_bravo_team    tournament_matchs @relation("bravo_team", fields: [tournament_bravo_team_id], references: [id])
+  tournament_bravo_team_id BigInt            @unique
+  team_user                team_user         @relation(fields: [team_user_id], references: [id])
+  team_user_id             BigInt            @unique
+  team_ranks               team_ranks        @relation(fields: [team_ranks_id], references: [id])
+  team_ranks_id            BigInt            @unique
+  tournament_team          tournament_team   @relation(fields: [tournament_team_id], references: [id])
+  tournament_team_id       BigInt            @unique
+  created_at               DateTime          @default(now())
+  updated_at               DateTime          @updatedAt
+}
+
+model tournaments {
+  id                        BigInt                  @id @default(autoincrement())
+  name                      String                  @db.VarChar(255)  //大会名
+  permanent_url             String                  @db.VarChar(1023) //固定URL
+  image_url                 String                  @db.VarChar(1023) //大会画像
+  started_at                DateTime                                  //募集開始日時
+  ended_at                  DateTime                                  //募集終了日時
+  opened_at                 DateTime                                  //開催日時
+  closed_at                 DateTime                                  //終了日時
+  description               String                  @db.VarChar(1023) //大会概要
+  game_title                game_titles                               //ゲームタイトル
+  series                    series?                                   //シリーズ
+  user                      users?                                    //主催者ユーザ
+  team                      teams?                                    //主催者チーム
+  streaming_url             String                  @db.VarChar(1023) //配信URL
+  team_num_max              Int                                       //募集チーム数(最小)
+  team_num_min              Int                                       //募集チーム数(最大)
+  member_num                Int                                       //チーム人数
+  is_primary                Boolean                                   //予選有無
+  primary_system            String                  @db.VarChar(255)  //予選形式
+  primary_point             Int                                       //予選先取点
+  primary_max_team_num      Int                                       //予選1ブロック当たりの最大チーム数
+  primary_pass_order        Int                                       //予選通過順位
+  main_system               String                  @db.VarChar(255)  //本戦形式
+  main_point                Int                                       //本戦先取点
+  is_final_rule_change      Boolean                                   //決勝戦ルール変更有無
+  final_point               Int                                       //決勝戦先取点
+  matching                  tournament_matchings                      //組み合わせ
+  is_best8_shuffled         Boolean                                   //ベスト8シャッフル有無
+  is_3rd_place_playoff      Boolean                                   //3位決定戦有無
+  approval_status           tournament_apply_status                   //公式大会申請ステータス
+  privacy                   privacies                                 //公開設定
+  status                    statuses                                  //大会ステータス
+  tournament_user           tournament_user         @relation(fields: [tournament_user_id], references: [id])
+  tournament_user_id        BigInt                  @unique
+  user_points               user_points             @relation(fields: [user_points_id], references: [id])
+  user_points_id            BigInt                  @unique
+  team_points               team_points             @relation(fields: [team_points_id], references: [id])
+  team_points_id            BigInt                  @unique
+  tournament_team           tournament_team         @relation(fields: [tournament_team_id], references: [id])
+  tournament_team_id        BigInt                  @unique
+  tournament_match_rules    tournament_match_rules  @relation(fields: [tournament_match_rules_id], references: [id])
+  tournament_match_rules_id BigInt                  @unique
+  tournament_matchs         tournament_matchs       @relation(fields: [tournament_matchs_id], references: [id])
+  tournament_matchs_id      BigInt                  @unique
+  created_at                DateTime                @default(now())
+  updated_at                DateTime                @updatedAt
+}
+
+model tournament_user {
+  id         BigInt       @id @default(autoincrement())
+  tournament tournaments? //大会
+  user       users?       //ユーザ
+  created_at DateTime     @default(now())
+  updated_at DateTime     @updatedAt
+}
+
+model access_tokens {
+  id         BigInt   @id @default(autoincrement())
+  token      String   @db.VarChar(255)  //トークン
+  user       users?                     //ユーザ
+  expire     Int                        //有効期限
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+}
+
+model user_points {
+  id         BigInt       @id @default(autoincrement())
+  user       users?       //ユーザ
+  tournament tournaments? //大会
+  point      Int          //付与ポイント
+  created_at DateTime     @default(now())
+  updated_at DateTime     @updatedAt
+}
+
+model team_points {
+  id         BigInt       @id @default(autoincrement())
+  team       teams?       //チーム
+  tournament tournaments? //大会
+  point      Int          //付与ポイント
+  created_at DateTime     @default(now())
+  updated_at DateTime     @updatedAt
+}
+
+model tournament_team {
+  id         BigInt       @id @default(autoincrement())
+  tournament tournaments? //大会
+  team       teams?       //チーム
+  created_at DateTime     @default(now())
+  updated_at DateTime     @updatedAt
+}
+
+model tournament_match_rules {
+  id         BigInt       @id @default(autoincrement())
+  tournament tournaments? //大会
+  stage      stages       //大会ステージ
+  set        Int          //セット数
+  rule       String       @db.VarChar(255)
+  created_at DateTime     @default(now())
+  updated_at DateTime     @updatedAt
+}
+
+model tournament_matchs {
+  id                BigInt       @id @default(autoincrement())
+  tournament        tournaments?                          //大会
+  stage             stages                                //大会ステージ
+  block             String       @db.VarChar(255)         //ブロック
+  round             Int                                   //ラウンド数
+  match             Int                                   //試合数
+  alpha_team        teams?       @relation("alpha_team")  //アルファチーム
+  bravo_team        teams?       @relation("bravo_team")  //ブラボーチーム
+  alpha_team_result Int                                   //アルファチーム勝利数
+  bravo_team_result Int                                   //ブロボーチーム勝利数
+  created_at        DateTime     @default(now())
+  updated_at        DateTime     @updatedAt
+}
+
+model team_user {
+  id                 BigInt   @id @default(autoincrement())
+  team               teams?   //チーム
+  user               users?   //ユーザ
+  is_representatived Boolean  //代表か
+  created_at         DateTime @default(now())
+  updated_at         DateTime @updatedAt
+}
+
+model user_ranks {
+  id            BigInt         @id @default(autoincrement())
+  user          users?          //ユーザ
+  game_title    game_titles     //ゲームタイトル
+  year          Int             //年
+  season        seasons         //シーズン
+  point         Int             //ポイント
+  rank_position rank_positions  //順位変化
+  created_at    DateTime       @default(now())
+  updated_at    DateTime       @updatedAt
+}
+
+model team_ranks {
+  id            BigInt         @id @default(autoincrement())
+  team          teams?          //チーム
+  game_title    game_titles     //ゲームタイトル
+  year          Int             //年
+  season        seasons         //シーズン
+  point         Int             //ポイント
+  rank_position rank_positions  //順位変化
+  created_at    DateTime       @default(now())
+  updated_at    DateTime       @updatedAt
+}
