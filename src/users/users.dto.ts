@@ -1,6 +1,10 @@
 /* eslint-disable @typescript-eslint/no-namespace */
 import { ApiProperty } from '@nestjs/swagger';
-import { Role } from '@prisma/client';
+
+enum Role {
+  ADMIN,
+  USER,
+}
 
 export class Request {
   @ApiProperty()
