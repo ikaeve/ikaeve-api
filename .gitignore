@@ -1,6 +1,6 @@
 # compiled output
-dist
-node_modules
+/dist
+/node_modules
 
 # Logs
 logs
@@ -34,6 +34,13 @@ lerna-debug.log*
 !.vscode/launch.json
 !.vscode/extensions.json
 
+<<<<<<< HEAD
 # Environment
 .env
 docker-compose.override.yml
+=======
+# Prisma
+migrations
+.env
+docker-compose.yml
+>>>>>>> d1ce2e90a0d637e6b88ccea2dce7ec1090230f5d

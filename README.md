@@ -1,5 +1,5 @@
 <p align="center">
-  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo_text.svg" width="320" alt="Nest Logo" /></a>
+  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="200" alt="Nest Logo" /></a>
 </p>
 
 [circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
@@ -29,6 +29,7 @@
 ## Installation
 
 ```bash
+<<<<<<< HEAD
 $ npm install
 ```
 
@@ -56,6 +57,70 @@ $ npm run test:e2e
 
 # test coverage
 $ npm run test:cov
+=======
+$ make init
+```
+
+### Configuration
+
+Edit `.env` and `docker-compose.yml`. Please see below sample configuration.
+
+```bash
+DATABASE_URL="mysql://root:ikaeve@localhost:3306/ikaeve"
+MYSQL_ROOT_PASSWORD=ikaeve
+MYSQL_DATABASE=ikaeve
+MYSQL_USER=ikaeve
+MYSQL_PASSWORD=ikaeve
+```
+
+```yml
+version: '3.8'
+services:
+  # api:
+  #   container_name: ikaeve_api
+  #   build:
+  #     context: ./api
+  #   ports:
+  #     - 3000:3000
+  db:
+    image: mariadb:10.8-rc
+    container_name: ikaeve_db
+    ports:
+      - 3306:3306
+    environment:
+      MYSQL_ROOT_PASSWORD: $MYSQL_ROOT_PASSWORD
+      MYSQL_DATABASE: $MYSQL_DATABASE
+      MYSQL_USER: $MYSQL_USER
+      MYSQL_PASSWORD: $MYSQL_PASSWORD
+```
+
+### Database and Migration
+
+Edit `prisma/schema.prisma`, after that migrate following below command.
+
+```bash
+make migration
+```
+
+Connect MySQL/MariaDB in 3306 port, and initialize database. Please mind after migrate all of data is lost.
+
+## Documentation
+
+NestJS build the documents following formats `.json`, `.yaml` and `.html` in `docs` directory automatically and try it out all of API by Swagger in `documents` path.
+
+[Swagger](http://localhost:3000/documents)
+
+[Redoc](./docs/index.html)
+
+## Running the API
+
+```bash
+# development
+$ npm run start:dev
+
+# production mode
+$ npm run start:prod
+>>>>>>> d1ce2e90a0d637e6b88ccea2dce7ec1090230f5d
 ```
 
 ## Support
