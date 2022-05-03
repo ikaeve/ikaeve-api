@@ -68,7 +68,7 @@ enum stages {
 
 //公式大会申請ステータスマスタ
 enum tournament_apply_status {
-  APPLY     //申請済み
+  APPLYING  //申請済み
   APPROVED  //承認済み
   REJECTED  //棄却
 }
@@ -164,12 +164,12 @@ model tournaments {
   team_num_max              Int                                       //募集チーム数(最小)
   team_num_min              Int                                       //募集チーム数(最大)
   member_num                Int                                       //チーム人数
-  is_primary                Boolean                                   //予選有無
-  primary_system            String                  @db.VarChar(255)  //予選形式
-  primary_point             Int                                       //予選先取点
-  primary_max_team_num      Int                                       //予選1ブロック当たりの最大チーム数
-  primary_pass_order        Int                                       //予選通過順位
-  main_system               String                  @db.VarChar(255)  //本戦形式
+  is_qualifying_required    Boolean                                   //予選有無
+  qualifying_system         tournament_systems                        //予選形式
+  qualifying_point          Int                                       //予選先取点
+  qualifying_max_team_num   Int                                       //予選1ブロック当たりの最大チーム数
+  qualifying_pass_order     Int                                       //予選通過順位
+  main_system               tournament_systems                        //本戦形式
   main_point                Int                                       //本戦先取点
   is_final_rule_change      Boolean                                   //決勝戦ルール変更有無
   final_point               Int                                       //決勝戦先取点
@@ -207,7 +207,7 @@ model access_tokens {
   id         BigInt   @id @default(autoincrement())
   token      String   @db.VarChar(255)  //トークン
   user       users?                     //ユーザ
-  expire     Int                        //有効期限
+  expiration Int                        //有効期限
   created_at DateTime @default(now())
   updated_at DateTime @updatedAt
 }
