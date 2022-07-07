@@ -183,7 +183,7 @@ model AccessToken {
   token      String   @db.VarChar(255) // トークン
   user       User     @relation(fields: [userId], references: [id]) // ユーザ
   userId     BigInt   @map("user_id")
-  expiration Int // 有効期限
+  expiration DateTime // 有効期限
   createdAt  DateTime @default(now()) @map("created_at")
   updatedAt  DateTime @updatedAt @map("updated_at")
 
