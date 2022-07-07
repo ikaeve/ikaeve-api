@@ -278,29 +278,29 @@ model TeamUser {
 }
 
 model UserRank {
-  id           BigInt       @id @default(autoincrement())
-  user         User         @relation(fields: [userId], references: [id]) // ユーザ
-  userId       BigInt       @map("user_id")
-  gameTitle    GameTitle    @map("game_title") // ゲームタイトル
-  year         Int // 年
-  season       Season // シーズン
-  point        Int // ポイント
-  createdAt    DateTime     @default(now()) @map("created_at")
-  updatedAt    DateTime     @updatedAt @map("updated_at")
+  id        BigInt    @id @default(autoincrement())
+  user      User      @relation(fields: [userId], references: [id]) // ユーザ
+  userId    BigInt    @map("user_id")
+  gameTitle GameTitle @map("game_title") // ゲームタイトル
+  year      Int // 年
+  season    Season // シーズン
+  point     Int // ポイント
+  createdAt DateTime  @default(now()) @map("created_at")
+  updatedAt DateTime  @updatedAt @map("updated_at")
 
   @@map("user_ranks")
 }
 
 model TeamRank {
-  id           BigInt       @id @default(autoincrement())
-  team         Team         @relation(fields: [teamId], references: [id]) // チーム
-  teamId       BigInt       @map("team_id")
-  gameTitle    GameTitle    @map("game_title") // ゲームタイトル
-  year         Int // 年
-  season       Season // シーズン
-  point        Int // ポイント
-  createdAt    DateTime     @default(now()) @map("created_at")
-  updatedAt    DateTime     @updatedAt @map("updated_at")
+  id        BigInt    @id @default(autoincrement())
+  team      Team      @relation(fields: [teamId], references: [id]) // チーム
+  teamId    BigInt    @map("team_id")
+  gameTitle GameTitle @map("game_title") // ゲームタイトル
+  year      Int // 年
+  season    Season // シーズン
+  point     Int // ポイント
+  createdAt DateTime  @default(now()) @map("created_at")
+  updatedAt DateTime  @updatedAt @map("updated_at")
 
   @@map("team_ranks")
 }
