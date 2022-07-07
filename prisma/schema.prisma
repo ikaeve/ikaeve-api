@@ -20,13 +20,6 @@ enum Privacy {
   PRIVATE // 非公開
 }
 
-// 順位マスタ
-enum RankPosition {
-  DOWN // 降下
-  KEEP // 維持
-  UP // 上昇
-}
-
 // トーナメント形式マスタ
 enum TournamentSystem {
   SINGLE_ELIMINATION // シングルエリミネーション
@@ -292,7 +285,6 @@ model UserRank {
   year         Int // 年
   season       Season // シーズン
   point        Int // ポイント
-  rankPosition RankPosition @map("rank_position") // 順位変化
   createdAt    DateTime     @default(now()) @map("created_at")
   updatedAt    DateTime     @updatedAt @map("updated_at")
 
@@ -307,7 +299,6 @@ model TeamRank {
   year         Int // 年
   season       Season // シーズン
   point        Int // ポイント
-  rankPosition RankPosition @map("rank_position") // 順位変化
   createdAt    DateTime     @default(now()) @map("created_at")
   updatedAt    DateTime     @updatedAt @map("updated_at")
 
